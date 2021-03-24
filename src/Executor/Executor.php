@@ -138,7 +138,7 @@ class Executor
         $variableValues = null,
         $operationName = null,
         ?callable $fieldResolver = null,
-        ? array $accessScope = null
+        ? array $accessScope = []
     ) {
         $factory = self::$implementationFactory;
 

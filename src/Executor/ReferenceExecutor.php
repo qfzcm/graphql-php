@@ -1229,11 +1229,12 @@ class ReferenceExecutor implements ExecutorImplementation
         if (count($fieldPath) == 2) {
             $isTrue = false;
             foreach ($this->exeContext->accessScope as $accessScope) {
-                if (array_diff($accessScope, $fieldPath) === array_diff($fieldPath, $accessScope)) {
+                if ($accessScope[0] === 'all' && count($accessScope) == 1) {
                     $isTrue = true;
                     break;
                 }
-                if ($accessScope[0] === 'all' && count($accessScope) == 1) {
+
+                if (array_diff($accessScope, $fieldPath) === array_diff($fieldPath, $accessScope)) {
                     $isTrue = true;
                     break;
                 }

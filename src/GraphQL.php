@@ -87,7 +87,7 @@ class GraphQL
         ?string $operationName = null,
         ?callable $fieldResolver = null,
         ?array $validationRules = null,
-        ?array $accessScope = null
+        ?array $accessScope = []
     ) : ExecutionResult {
         $promiseAdapter = new SyncPromiseAdapter();
 
@@ -129,7 +129,7 @@ class GraphQL
         ?string $operationName = null,
         ?callable $fieldResolver = null,
         ?array $validationRules = null,
-        ?array $accessScope = null
+        ?array $accessScope = []
     ) : Promise {
         try {
             if ($source instanceof DocumentNode) {
