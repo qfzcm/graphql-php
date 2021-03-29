@@ -50,6 +50,9 @@ class ExecutionContext
     /** @var array */
     public $accessScope;
 
+    /** @var array */
+    public $resourceAll;
+
     public function __construct(
         $schema,
         $fragments,
@@ -60,7 +63,8 @@ class ExecutionContext
         $errors,
         $fieldResolver,
         $promiseAdapter,
-        $accessScope
+        $accessScope,
+        $resourceAll
     ) {
         $this->schema         = $schema;
         $this->fragments      = $fragments;
@@ -72,6 +76,7 @@ class ExecutionContext
         $this->fieldResolver  = $fieldResolver;
         $this->promiseAdapter = $promiseAdapter;
         $this->accessScope    = $accessScope;
+        $this->resourceAll    = $resourceAll;
     }
 
     public function addError(Error $error)

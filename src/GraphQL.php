@@ -87,7 +87,8 @@ class GraphQL
         ?string $operationName = null,
         ?callable $fieldResolver = null,
         ?array $validationRules = null,
-        ?array $accessScope = []
+        ?array $accessScope = [],
+        ?array $resourceAll = []
     ) : ExecutionResult {
         $promiseAdapter = new SyncPromiseAdapter();
 
@@ -101,7 +102,8 @@ class GraphQL
             $operationName,
             $fieldResolver,
             $validationRules,
-            $accessScope
+            $accessScope,
+            $resourceAll
         );
 
         return $promiseAdapter->wait($promise);
@@ -129,7 +131,8 @@ class GraphQL
         ?string $operationName = null,
         ?callable $fieldResolver = null,
         ?array $validationRules = null,
-        ?array $accessScope = []
+        ?array $accessScope = [],
+        ?array $resourceAll = []
     ) : Promise {
         try {
             if ($source instanceof DocumentNode) {
@@ -170,7 +173,8 @@ class GraphQL
                 $variableValues,
                 $operationName,
                 $fieldResolver,
-                $accessScope
+                $accessScope,
+                $resourceAll
             );
         } catch (Error $e) {
             return $promiseAdapter->createFulfilled(

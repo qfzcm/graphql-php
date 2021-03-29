@@ -86,7 +86,8 @@ class ReferenceExecutor implements ExecutorImplementation
         $variableValues,
         ?string $operationName,
         callable $fieldResolver,
-        ?array $accessScope
+        ?array $accessScope,
+        ?array $resourceAll
     ) : ExecutorImplementation {
         $exeContext = self::buildExecutionContext(
             $schema,
@@ -97,7 +98,8 @@ class ReferenceExecutor implements ExecutorImplementation
             $operationName,
             $fieldResolver,
             $promiseAdapter,
-            $accessScope
+            $accessScope,
+            $resourceAll
         );
 
         if (is_array($exeContext)) {
@@ -140,7 +142,8 @@ class ReferenceExecutor implements ExecutorImplementation
         ?string $operationName = null,
         ?callable $fieldResolver = null,
         ?PromiseAdapter $promiseAdapter = null,
-        ?array $accessScope
+        ?array $accessScope = [],
+        ?array $resourceAll = []
     ) {
         $errors    = [];
         $fragments = [];
@@ -203,7 +206,8 @@ class ReferenceExecutor implements ExecutorImplementation
             $errors,
             $fieldResolver,
             $promiseAdapter,
-            $accessScope
+            $accessScope,
+            $resourceAll
         );
     }
 
@@ -1228,17 +1232,33 @@ class ReferenceExecutor implements ExecutorImplementation
     {
         if (count($fieldPath) == 2) {
             $isTrue = false;
-            foreach ($this->exeContext->accessScope as $accessScope) {
-                if ($accessScope[0] === 'all' && count($accessScope) == 1) {
+            foreach ($this->exeContext->resourceAll as $resource) {
+                foreach ($resource as $item) {
+                    if (array_diff($fieldPath, $item) == null) {
+                        $isTrue = false;
+                        break;
+                    }
                     $isTrue = true;
-                    break;
                 }
-
-                if (array_diff($accessScope, $fieldPath) === array_diff($fieldPath, $accessScope)) {
-                    $isTrue = true;
+                if ($isTrue == false) {
                     break;
                 }
             }
+            if ($isTrue == false) {
+                foreach ($this->exeContext->accessScope as $accessScope) {
+                    if ($accessScope[0] === 'all' && count($accessScope) == 1) {
+                        $isTrue = true;
+                        break;
+                    }
+                    if ($accessScope[0] != null) {
+                        if (array_diff($accessScope, $fieldPath) === array_diff($fieldPath, $accessScope)) {
+                            $isTrue = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (!$isTrue) {
                 throw new RuntimeException('权限不足', 401);
             }
