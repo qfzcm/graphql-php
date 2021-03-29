@@ -138,7 +138,8 @@ class Executor
         $variableValues = null,
         $operationName = null,
         ?callable $fieldResolver = null,
-        ? array $accessScope = null
+        ?array $accessScope = [],
+        ?array $resourceAll = []
     ) {
         $factory = self::$implementationFactory;
 
@@ -152,7 +153,8 @@ class Executor
             $variableValues,
             $operationName,
             $fieldResolver ?? self::$defaultFieldResolver,
-            $accessScope
+            $accessScope,
+            $resourceAll
         );
 
         return $executor->doExecute();
