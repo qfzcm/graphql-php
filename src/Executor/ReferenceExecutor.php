@@ -1232,33 +1232,44 @@ class ReferenceExecutor implements ExecutorImplementation
     {
         if (count($fieldPath) == 2) {
             $isTrue = false;
-            foreach ($this->exeContext->resourceAll as $resource) {
-                foreach ($resource as $item) {
-                    if (array_diff($fieldPath, $item) == null) {
-                        $isTrue = false;
+            // 验证请求是否需要权限
+            if (array_diff($fieldPath, ["__schema","queryType"], ["__schema","mutationType"], ["__schema","types"],["__schema","directives"], ["__schema", "subscriptionType"]) != []) {
+                foreach ($this->exeContext->resourceAll as $resource) {
+                    foreach ($resource as $item) {
+                        if (array_diff($fieldPath, $item) == null) {
+                            $isTrue = false;
+                            break;
+                        }
+                        $isTrue = true;
+                    }
+                    if ($isTrue === false) {
                         break;
                     }
-                    $isTrue = true;
-                }
-                if ($isTrue == false) {
-                    break;
                 }
             }
+            // 验证当前用户是否拥有权限
             if ($isTrue == false) {
                 foreach ($this->exeContext->accessScope as $accessScope) {
                     if ($accessScope[0] === 'all' && count($accessScope) == 1) {
                         $isTrue = true;
                         break;
                     }
+
                     if ($accessScope[0] != null) {
-                        if (array_diff($accessScope, $fieldPath) === array_diff($fieldPath, $accessScope)) {
-                            $isTrue = true;
+                        foreach ($accessScope as $item) {
+                            if (array_diff($item, $fieldPath) === array_diff($fieldPath, $item)) {
+                                $isTrue = true;
+                                break;
+                            }
+                            $isTrue = false;
+                        }
+
+                        if ($isTrue === true) {
                             break;
                         }
                     }
                 }
             }
-
             if (!$isTrue) {
                 throw new RuntimeException('权限不足', 401);
             }
