@@ -1201,8 +1201,11 @@ class ReferenceExecutor implements ExecutorImplementation
         foreach ($fields as $responseName => $fieldNodes) {
             $fieldPath   = $path;
             $fieldPath[] = $responseName;
+
             // 验证访问权限
-            $this->verifyPermissions($fieldPath);
+            if ($this->exeContext->resourceAll != []) {
+                $this->verifyPermissions($fieldPath);
+            }
 
             $result      = $this->resolveField($parentType, $rootValue, $fieldNodes, $fieldPath);
             if ($result === self::$UNDEFINED) {
